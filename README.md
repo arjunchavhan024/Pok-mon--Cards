@@ -42,8 +42,19 @@ A simple React-based Pokemon app that fetches data from the PokeAPI. This app al
 ## Setup & Installation
 
 1. **Clone the repository**:
+2. 
+(https://github.com/arjunchavhan024/Pok-mon--Cards)
 
-   ```bash
-   git clone https://github.com/yourusername/pokemon-app.git
-   cd pokemon-app
-   ```
+cd pokemon-app
+
+
+## Thank You
+
+---
+
+<a href="https://github.com/arjunchavhan024">
+  <img src="https://imgur.com/rilHVxA.png"/>
+</a>
+
+---
+
