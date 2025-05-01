@@ -1,9 +1,22 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [cards, setCards] = useState([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
+  const [favorites, setFavorites] = useState(() => {
+    const stored = localStorage.getItem("favorites");
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  const toggleFavorite = (id) => {
+    const updated = favorites.includes(id)
+      ? favorites.filter((favId) => favId !== id)
+      : [...favorites, id];
+    setFavorites(updated);
+    localStorage.setItem("favorites", JSON.stringify(updated));
+  };
 
   const fetchData = async () => {
     try {
@@ -50,14 +63,15 @@ const Home = () => {
 
   return (
     <div className="container py-4">
-      <nav className="navbar bg-light mb-4 p-3 rounded">
+      <nav className="navbar bg-light mb-4 p-3 rounded d-flex justify-content-between align-items-center">
         <input
           type="text"
           name="search"
-          className="form-control"
+          className="form-control me-3"
           placeholder="Search Pokémon..."
           id="search-field"
           onChange={(e) => setQuery(e.target.value.toLowerCase())}
+          style={{ maxWidth: "300px" }}
         />
       </nav>
 
@@ -91,14 +105,27 @@ const Home = () => {
                       </span>
                     ))}
                   </p>
-                  <a
-                    href={`https://pokeapi.co/api/v2/pokemon/${card.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-primary mt-auto"
-                  >
-                    View Details
-                  </a>
+                  <div className="mt-auto d-flex justify-content-between align-items-center">
+                    <Link
+                      to={`/pokemon/${card.id}`}
+                      className="btn btn-sm btn-primary"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View Details
+                    </Link>
+
+                    <button
+                      className={`btn btn-sm ${
+                        favorites.includes(card.id)
+                          ? "btn-danger"
+                          : "btn-outline-danger"
+                      }`}
+                      onClick={() => toggleFavorite(card.id)}
+                    >
+                      {favorites.includes(card.id) ? "Unfavorite" : "Favorite"}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
