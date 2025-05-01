@@ -147,6 +147,7 @@ const Home = () => {
                 id={`type-${type}`}
                 checked={selectedTypes.includes(type)}
                 onChange={() => handleTypeFilter(type)}
+                style={{ cursor: "pointer" }}
               />
               <label
                 className="form-check-label text-capitalize"
