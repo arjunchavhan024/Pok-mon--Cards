@@ -5,12 +5,30 @@ const PokemonDetails = () => {
   const { id } = useParams();
   const [pokemon, setPokemon] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [evolutionChain, setEvolutionChain] = useState([]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       try {
         const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
         const data = await res.json();
+
+        const speciesRes = await fetch(data.species.url);
+        const speciesData = await speciesRes.json();
+
+        const evolutionRes = await fetch(speciesData.evolution_chain.url);
+        const evolutionData = await evolutionRes.json();
+
+        const extractEvolutions = (chain) => {
+          const evo = [];
+          let current = chain;
+          while (current) {
+            evo.push(current.species.name);
+            current = current.evolves_to[0];
+          }
+          return evo;
+        };
+
         setPokemon({
           name: data.name,
           id: data.id,
@@ -19,10 +37,17 @@ const PokemonDetails = () => {
           height: data.height,
           weight: data.weight,
           abilities: data.abilities.map((a) => a.ability.name),
+          stats: data.stats.map((s) => ({
+            name: s.stat.name,
+            value: s.base_stat,
+          })),
+          moves: data.moves.slice(0, 5).map((m) => m.move.name),
         });
+
+        setEvolutionChain(extractEvolutions(evolutionData.chain));
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching details:", error);
+        console.error("Error fetching Pokémon details:", error);
         setLoading(false);
       }
     };
@@ -60,7 +85,8 @@ const PokemonDetails = () => {
                 className="img-fluid mb-3"
                 style={{ height: "200px", objectFit: "contain" }}
               />
-              <p className="mb-2">
+
+              <p>
                 <strong>Types:</strong>
                 <br />
                 {pokemon.types.map((t, idx) => (
@@ -72,13 +98,15 @@ const PokemonDetails = () => {
                   </span>
                 ))}
               </p>
+
               <p>
                 <strong>Height:</strong> {pokemon.height}
               </p>
               <p>
                 <strong>Weight:</strong> {pokemon.weight}
               </p>
-              <p className="mb-0">
+
+              <p>
                 <strong>Abilities:</strong>
                 <br />
                 {pokemon.abilities.map((a, idx) => (
@@ -90,6 +118,49 @@ const PokemonDetails = () => {
                   </span>
                 ))}
               </p>
+
+              <p className="mt-3">
+                <strong>Base Stats:</strong>
+              </p>
+              <ul className="list-group mb-3">
+                {pokemon.stats.map((stat, idx) => (
+                  <li
+                    key={idx}
+                    className="list-group-item d-flex justify-content-between text-capitalize"
+                  >
+                    <span>{stat.name}</span>
+                    <span>{stat.value}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <p>
+                <strong>Top Moves:</strong>
+              </p>
+              <div>
+                {pokemon.moves.map((move, idx) => (
+                  <span
+                    key={idx}
+                    className="badge bg-warning text-dark me-2 text-capitalize"
+                  >
+                    {move}
+                  </span>
+                ))}
+              </div>
+
+              <p className="mt-3">
+                <strong>Evolution Chain:</strong>
+              </p>
+              <div>
+                {evolutionChain.map((name, idx) => (
+                  <span
+                    key={idx}
+                    className="badge bg-success me-2 text-capitalize"
+                  >
+                    {name}
+                  </span>
+                ))}
+              </div>
             </div>
             <div className="card-footer text-center">
               <Link to="/" className="btn btn-outline-primary">
