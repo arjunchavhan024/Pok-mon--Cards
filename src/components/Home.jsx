@@ -109,8 +109,6 @@ const Home = () => {
                     <Link
                       to={`/pokemon/${card.id}`}
                       className="btn btn-sm btn-primary"
-                      target="_blank"
-                      rel="noopener noreferrer"
                     >
                       View Details
                     </Link>
