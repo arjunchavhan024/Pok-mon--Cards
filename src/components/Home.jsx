@@ -16,12 +16,19 @@ const Home = () => {
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [allTypes, setAllTypes] = useState([]);
 
-  const toggleFavorite = (id) => {
+  const toggleFavorite = (id, name) => {
     const updated = favorites.includes(id)
       ? favorites.filter((favId) => favId !== id)
       : [...favorites, id];
+
     setFavorites(updated);
     localStorage.setItem("favorites", JSON.stringify(updated));
+
+    alert(
+      favorites.includes(id)
+        ? `${name} has been removed from your favorites.`
+        : `${name} has been added to your favorites!`
+    );
   };
 
   const fetchData = async () => {
@@ -201,9 +208,13 @@ const Home = () => {
                         ? "btn-danger"
                         : "btn-outline-danger"
                     }`}
-                    onClick={() => toggleFavorite(card.id)}
+                    onClick={() => toggleFavorite(card.id, card.name)}
                   >
-                    {favorites.includes(card.id) ? "Unfavorite" : "Favorite"}
+                    {favorites.includes(card.id) ? (
+                      <i className="fa-solid fa-heart"></i>
+                    ) : (
+                      <i className="fa-regular fa-heart"></i>
+                    )}
                   </button>
                 </div>
               </div>
